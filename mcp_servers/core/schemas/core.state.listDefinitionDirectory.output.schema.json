@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.listDefinitionDirectory Output Schema",
+  "description": "Output data for the core.state.listDefinitionDirectory MCP tool.",
+  "type": "object",
+  "properties": {
+    "entries": {
+      "type": "array",
+      "description": "A list of file and directory paths within the specified directory.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "revision": {
+      "type": "string",
+      "description": "The Git revision of the listed directory."
+    }
+  },
+  "required": [
+    "entries",
+    "revision"
+  ],
+  "additionalProperties": false
+}

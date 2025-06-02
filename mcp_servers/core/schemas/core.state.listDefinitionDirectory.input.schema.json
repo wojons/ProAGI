@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.listDefinitionDirectory Input Schema",
+  "description": "Input parameters for the core.state.listDefinitionDirectory MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "dir_path": {
+      "type": "string",
+      "description": "The path to the directory relative to the application's state root."
+    },
+    "recursive": {
+      "type": "boolean",
+      "description": "Whether to list contents recursively.",
+      "default": false
+    },
+    "revision": {
+      "type": "string",
+      "description": "The Git revision. Defaults to current.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "dir_path"
+  ],
+  "additionalProperties": false
+}

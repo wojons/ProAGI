@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.setDefinitionFileContent Output Schema",
+  "description": "Output data for the core.state.setDefinitionFileContent MCP tool.",
+  "type": "object",
+  "properties": {
+    "resulting_revision": {
+      "type": "string",
+      "description": "The resulting Git revision (commit hash) after setting the content."
+    }
+  },
+  "required": [
+    "resulting_revision"
+  ],
+  "additionalProperties": false
+}

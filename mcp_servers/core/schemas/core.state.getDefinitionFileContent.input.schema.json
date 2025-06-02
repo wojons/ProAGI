@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.getDefinitionFileContent Input Schema",
+  "description": "Input parameters for the core.state.getDefinitionFileContent MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "file_path": {
+      "type": "string",
+      "description": "The path to the file relative to the application's state root."
+    },
+    "revision": {
+      "type": "string",
+      "description": "The Git revision (commit hash, branch name, tag). Defaults to current.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "file_path"
+  ],
+  "additionalProperties": false
+}

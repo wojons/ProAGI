@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sandbox Execute Request Schema",
+  "description": "Schema for the request body sent to the Sandbox /execute endpoint.",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "description": "Unique ID for tracing this specific invocation."
+    },
+    "requestData": {
+      "type": "object",
+      "description": "Details of the event triggering this execution.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["http", "trigger", "callback", "queue", "cron", "internal"],
+          "description": "Origin Type."
+        },
+        "httpDetails": {
+          "type": "object",
+          "description": "Present if source == 'http'.",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"]
+            },
+            "path": {
+              "type": "string",
+              "description": "e.g., '/api/users/123?param=value' (including query string)."
+            },
+            "routePattern": {
+              "type": "string",
+              "description": "e.g., '/api/user/:username' (Matched route, optional).",
+              "nullable": true
+            },
+            "pathParameters": {
+              "type": "object",
+              "description": "Decoded path parameters based on routePattern (optional).",
+              "additionalProperties": { "type": "string" },
+              "nullable": true
+            },
+            "queryParameters": {
+              "type": "object",
+              "description": "Decoded query string parameters.",
+              "additionalProperties": { "type": "string" }
+            },
+            "headers": {
+              "type": "object",
+              "description": "Key-value map of request headers.",
+              "additionalProperties": { "type": "string" }
+            },
+            "body": {
+              "type": "string",
+              "description": "Raw request body (Base64 encoded for binary data, plain string otherwise).",
+              "nullable": true
+            },
+            "bodyEncoding": {
+              "type": "string",
+              "enum": ["utf8", "base64"],
+              "description": "Indicates encoding of the body field."
+            }
+          },
+          "required": ["method", "path", "bodyEncoding"],
+          "additionalProperties": false
+        },
+        "triggerDetails": {
+          "type": "object",
+          "description": "Present if source == 'trigger'.",
+          "properties": {
+            "sourceAppId": { "type": "string" },
+            "triggerEvent": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "description": "JSON object payload specific to the trigger.",
+              "additionalProperties": true
+            }
+          },
+          "required": ["sourceAppId", "triggerEvent", "payload"],
+          "additionalProperties": false
+        },
+        "callbackDetails": {
+          "type": "object",
+          "description": "Present if source == 'callback'.",
+          "properties": {
+            "callbackUrl": { "type": "string" },
+            "headers": {
+              "type": "object",
+              "description": "Headers from the callback source.",
+              "additionalProperties": { "type": "string" }
+            },
+            "body": {
+              "type": "string",
+              "description": "Raw request body.",
+              "nullable": true
+            },
+            "bodyEncoding": {
+              "type": "string",
+              "enum": ["utf8", "base64"]
+            }
+          },
+          "required": ["callbackUrl", "headers", "bodyEncoding"],
+          "additionalProperties": false
+        },
+        "queueDetails": {
+          "type": "object",
+          "description": "Present if source == 'queue'.",
+          "properties": {
+            "queueName": { "type": "string" },
+            "messageId": { "type": "string" },
+            "payload": {
+              "type": "object",
+              "description": "JSON object payload from the queue message.",
+              "additionalProperties": true
+            }
+          },
+          "required": ["queueName", "messageId", "payload"],
+          "additionalProperties": false
+        },
+        "cronDetails": {
+          "type": "object",
+          "description": "Present if source == 'cron'.",
+          "properties": {
+            "jobId": { "type": "string" },
+            "scheduledTime": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp."
+            }
+          },
+          "required": ["jobId", "scheduledTime"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["source"],
+      "oneOf": [
+        { "properties": { "source": { "const": "http" }, "httpDetails": {} }, "required": ["httpDetails"] },
+        { "properties": { "source": { "const": "trigger" }, "triggerDetails": {} }, "required": ["triggerDetails"] },
+        { "properties": { "source": { "const": "callback" }, "callbackDetails": {} }, "required": ["callbackDetails"] },
+        { "properties": { "source": { "const": "queue" }, "queueDetails": {} }, "required": ["queueDetails"] },
+        { "properties": { "source": { "const": "cron" }, "cronDetails": {} }, "required": ["cronDetails"] }
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "description": "Background information provided by the Framework.",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "Unique ID of the UHLP application this request belongs to."
+        },
+        "componentId": {
+          "type": "string",
+          "description": "ID of the component/workflow being invoked (from state)."
+        },
+        "workflowInfo": {
+          "type": "object",
+          "description": "Optional: Added if handlerType is WORKFLOW.",
+          "properties": {
+            "workflowId": { "type": "string" },
+            "startAt": {
+              "type": "string",
+              "description": "Optional starting step ID.",
+              "nullable": true
+            }
+          },
+          "required": ["workflowId"],
+          "additionalProperties": false,
+          "nullable": true
+        },
+        "mcp_endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the App-Specific MCP Server the sandbox should use."
+        },
+        "state_config": {
+          "type": "object",
+          "description": "Info about how the sandbox should access its state.",
+          "properties": {
+            "type": { "type": "string" },
+            "params": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          },
+          "required": ["type", "params"],
+          "additionalProperties": false
+        },
+        "userInfo": {
+          "type": "object",
+          "description": "Optional: Present if user context is available/authenticated.",
+          "properties": {
+            "id": { "type": "string" },
+            "roles": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "isAuthenticated": { "type": "boolean" },
+            "claims": {
+              "type": "object",
+              "description": "Optional: custom claims/attributes.",
+              "additionalProperties": true
+            }
+          },
+          "required": ["id", "roles", "isAuthenticated"],
+          "additionalProperties": false,
+          "nullable": true
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Optional: Identifier for framework-managed session state.",
+          "nullable": true
+        },
+        "configuration": {
+          "type": "object",
+          "description": "Select app-specific config values injected by Framework.",
+          "additionalProperties": true
+        },
+        "applicationInfo": {
+          "type": "object",
+          "description": "General info about the running app (e.g., deployment_mode).",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "appId",
+        "componentId",
+        "mcp_endpoint",
+        "state_config",
+        "configuration",
+        "applicationInfo"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "requestId",
+    "requestData",
+    "context"
+  ],
+  "additionalProperties": false
+}

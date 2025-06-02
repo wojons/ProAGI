@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.framework.logFrameworkMessage Output Schema",
+  "description": "Output data for the core.framework.logFrameworkMessage MCP tool (minimal as it's for logging).",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

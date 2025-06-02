@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.deleteDefinitionFile Input Schema",
+  "description": "Input parameters for the core.state.deleteDefinitionFile MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "file_path": {
+      "type": "string",
+      "description": "The path to the file relative to the application's state root."
+    },
+    "commit_message": {
+      "type": "string",
+      "description": "The Git commit message for this change."
+    },
+    "author": {
+      "type": "string",
+      "description": "Optional author string for the Git commit.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "file_path",
+    "commit_message"
+  ],
+  "additionalProperties": false
+}

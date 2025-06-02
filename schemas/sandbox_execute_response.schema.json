@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sandbox Execute Response Schema",
+  "description": "Schema for the response body returned by the Sandbox /execute endpoint.",
+  "type": "object",
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "description": "Matches request ID from the input."
+    },
+    "resultType": {
+      "type": "string",
+      "enum": ["generic", "httpResponse", "error", "workflowStep"],
+      "description": "Type of result."
+    },
+    "data": {
+      "type": "object",
+      "description": "Structure depends on resultType.",
+      "properties": {
+        "statusCode": {
+          "type": "integer",
+          "description": "HTTP status code (for httpResponse)."
+        },
+        "headers": {
+          "type": "object",
+          "description": "HTTP headers (for httpResponse).",
+          "additionalProperties": { "type": "string" }
+        },
+        "body": {
+          "type": "string",
+          "description": "Response body (for httpResponse).",
+          "nullable": true
+        },
+        "bodyEncoding": {
+          "type": "string",
+          "enum": ["utf8", "base64"],
+          "description": "Indicates encoding of the body field (for httpResponse)."
+        },
+        "code": {
+          "type": "string",
+          "description": "Application-level error code (for error)."
+        },
+        "message": {
+          "type": "string",
+          "description": "Application-level error message (for error)."
+        },
+        "details": {
+          "type": "object",
+          "description": "Optional details for application-level error (for error).",
+          "additionalProperties": true
+        },
+        "workflowId": {
+          "type": "string",
+          "description": "Workflow ID (for workflowStep)."
+        },
+        "stepId": {
+          "type": "string",
+          "description": "Workflow step ID (for workflowStep)."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["completed", "failed"],
+          "description": "Workflow step status (for workflowStep)."
+        },
+        "output": {
+          "type": "object",
+          "description": "Data produced by the workflow step (for workflowStep).",
+          "additionalProperties": true
+        },
+        "error": {
+          "type": "object",
+          "description": "Optional error details if workflow step status is failed (for workflowStep).",
+          "additionalProperties": true,
+          "nullable": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Optional: Performance metrics from the Sandbox.",
+      "properties": {
+        "execution_time_ms": {
+          "type": "integer",
+          "description": "Execution time in milliseconds.",
+          "nullable": true
+        },
+        "mcp_calls": {
+          "type": "array",
+          "description": "List of MCP call summaries.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": { "type": "string" },
+              "count": { "type": "integer" },
+              "total_duration_ms": { "type": "integer" },
+              "token_usage": {
+                "type": "object",
+                "properties": {
+                  "prompt": { "type": "integer" },
+                  "completion": { "type": "integer" },
+                  "total": { "type": "integer" }
+                },
+                "additionalProperties": false,
+                "nullable": true
+              }
+            },
+            "required": ["tool", "count", "total_duration_ms"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true,
+      "nullable": true
+    }
+  },
+  "required": [
+    "requestId",
+    "resultType",
+    "data"
+  ],
+  "additionalProperties": false
+}

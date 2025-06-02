@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.getRuntimeValue Output Schema",
+  "description": "Output data for the core.state.getRuntimeValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "value": {
+      "type": "string",
+      "description": "The value as a string if found, null otherwise.",
+      "nullable": true
+    },
+    "found": {
+      "type": "boolean",
+      "description": "True if the key was found, False otherwise."
+    }
+  },
+  "required": [
+    "value",
+    "found"
+  ],
+  "additionalProperties": false
+}

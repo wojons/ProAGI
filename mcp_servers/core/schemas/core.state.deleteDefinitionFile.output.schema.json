@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.deleteDefinitionFile Output Schema",
+  "description": "Output data for the core.state.deleteDefinitionFile MCP tool.",
+  "type": "object",
+  "properties": {
+    "resulting_revision": {
+      "type": "string",
+      "description": "The resulting Git revision (commit hash) after deleting the file."
+    }
+  },
+  "required": [
+    "resulting_revision"
+  ],
+  "additionalProperties": false
+}

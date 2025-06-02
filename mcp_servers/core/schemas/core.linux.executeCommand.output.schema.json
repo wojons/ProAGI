@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.linux.executeCommand Output Schema",
+  "description": "Output data for the core.linux.executeCommand MCP tool.",
+  "type": "object",
+  "properties": {
+    "stdout": {
+      "type": "string",
+      "description": "The standard output from the command."
+    },
+    "stderr": {
+      "type": "string",
+      "description": "The standard error from the command."
+    },
+    "exit_code": {
+      "type": "integer",
+      "description": "The exit code of the command."
+    }
+  },
+  "required": [
+    "stdout",
+    "stderr",
+    "exit_code"
+  ],
+  "additionalProperties": false
+}

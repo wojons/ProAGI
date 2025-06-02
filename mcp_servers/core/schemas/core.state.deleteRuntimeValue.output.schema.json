@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.deleteRuntimeValue Output Schema",
+  "description": "Output data for the core.state.deleteRuntimeValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "True if the operation was successful, False otherwise."
+    }
+  },
+  "required": [
+    "success"
+  ],
+  "additionalProperties": false
+}

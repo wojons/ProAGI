@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "proagi"
+version = "0.1.0"
+description = "Proof of Concept for an agentic AI platform."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10" # Aligning with potential UHLP standard
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0" # Basic testing framework
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.deleteRuntimeValue Input Schema",
+  "description": "Input parameters for the core.state.deleteRuntimeValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "key": {
+      "type": "string",
+      "description": "The key to delete."
+    }
+  },
+  "required": [
+    "app_id",
+    "key"
+  ],
+  "additionalProperties": false
+}

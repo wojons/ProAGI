@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.framework.getConfigValue Input Schema",
+  "description": "Input parameters for the core.framework.getConfigValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "key": {
+      "type": "string",
+      "description": "The configuration key to retrieve."
+    },
+    "component_id": {
+      "type": "string",
+      "description": "Optional component ID for component-specific overrides."
+    }
+  },
+  "required": [
+    "app_id",
+    "key"
+  ],
+  "additionalProperties": false
+}

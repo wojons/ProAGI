@@ -5,8 +5,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
-develop-eggs/
-dist/
+develop-eggs/dist/
 eggs/
 sdist/
 var/
@@ -36,3 +35,6 @@ htmlcov/
 
 # Project Intake Archive
 project_docs_intake/archive/
+
+# Ignore embedded git repository directory
+project_docs_intake/ClineAGI/

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.setRuntimeValue Input Schema",
+  "description": "Input parameters for the core.state.setRuntimeValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "key": {
+      "type": "string",
+      "description": "The key for the value."
+    },
+    "value": {
+      "type": "string",
+      "description": "The value to store (as a string)."
+    },
+    "ttl_seconds": {
+      "type": "integer",
+      "description": "Optional time-to-live in seconds.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "key",
+    "value"
+  ],
+  "additionalProperties": false
+}

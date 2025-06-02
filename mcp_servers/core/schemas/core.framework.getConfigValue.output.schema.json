@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.framework.getConfigValue Output Schema",
+  "description": "Output data for the core.framework.getConfigValue MCP tool.",
+  "type": "object",
+  "properties": {
+    "value": {
+      "description": "The retrieved configuration value. Can be any JSON type.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "object" },
+        { "type": "array" },
+        { "type": "null" }
+      ]
+    }
+  },
+  "required": [
+    "value"
+  ],
+  "additionalProperties": false
+}

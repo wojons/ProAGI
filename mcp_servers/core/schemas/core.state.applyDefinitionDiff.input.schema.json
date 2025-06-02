@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.applyDefinitionDiff Input Schema",
+  "description": "Input parameters for the core.state.applyDefinitionDiff MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "file_path": {
+      "type": "string",
+      "description": "The path to the file relative to the application's state root."
+    },
+    "diff_content": {
+      "type": "string",
+      "description": "The patch content in standard diff format."
+    },
+    "expected_base_revision": {
+      "type": "string",
+      "description": "The Git revision the diff is based on."
+    },
+    "commit_message": {
+      "type": "string",
+      "description": "The Git commit message for this change."
+    },
+    "author": {
+      "type": "string",
+      "description": "Optional author string for the Git commit.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "file_path",
+    "diff_content",
+    "expected_base_revision",
+    "commit_message"
+  ],
+  "additionalProperties": false
+}

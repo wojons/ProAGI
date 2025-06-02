@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.llm.generate Input Schema",
+  "description": "Input parameters for the core.llm.generate MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "prompt": {
+      "type": "string",
+      "description": "The prompt text to send to the LLM."
+    },
+    "model": {
+      "type": "string",
+      "description": "The LLM model to use (e.g., 'gpt-4-turbo', 'claude-3-sonnet').",
+      "nullable": true
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Optional LLM parameters (e.g., temperature, max_tokens).",
+      "additionalProperties": true,
+      "nullable": true
+    },
+    "output_format": {
+      "type": "string",
+      "description": "Hint for the expected output format (e.g., 'json', 'text').",
+      "nullable": true
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "Optional JSON schema for validating the LLM's output.",
+      "additionalProperties": true,
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "prompt"
+  ],
+  "additionalProperties": false
+}

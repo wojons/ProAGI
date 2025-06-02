@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.llm.generate Output Schema",
+  "description": "Output data for the core.llm.generate MCP tool.",
+  "type": "object",
+  "properties": {
+    "completion": {
+      "type": "string",
+      "description": "The generated text completion from the LLM."
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Optional metrics related to the LLM call (e.g., token usage).",
+      "properties": {
+        "token_usage": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "integer",
+              "description": "Number of tokens in the prompt."
+            },
+            "completion": {
+              "type": "integer",
+              "description": "Number of tokens in the completion."
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of tokens."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true,
+      "nullable": true
+    }
+  },
+  "required": [
+    "completion"
+  ],
+  "additionalProperties": false
+}

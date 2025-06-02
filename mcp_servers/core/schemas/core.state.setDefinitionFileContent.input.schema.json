@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "core.state.setDefinitionFileContent Input Schema",
+  "description": "Input parameters for the core.state.setDefinitionFileContent MCP tool.",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "The ID of the application."
+    },
+    "file_path": {
+      "type": "string",
+      "description": "The path to the file relative to the application's state root."
+    },
+    "content": {
+      "type": "string",
+      "description": "The new content of the file as a string (assuming text files)."
+    },
+    "commit_message": {
+      "type": "string",
+      "description": "The Git commit message for this change."
+    },
+    "author": {
+      "type": "string",
+      "description": "Optional author string for the Git commit.",
+      "nullable": true
+    }
+  },
+  "required": [
+    "app_id",
+    "file_path",
+    "content",
+    "commit_message"
+  ],
+  "additionalProperties": false
+}
