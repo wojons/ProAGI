@@ -34,7 +34,4 @@ htmlcov/
 *.log
 
 # Project Intake Archive
-project_docs_intake/archive/
-
-# Ignore embedded git repository directory
-project_docs_intake/ClineAGI/
+project_docs_intake/
