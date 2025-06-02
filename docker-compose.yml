@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: nexus_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nexus_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: nexus_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: nexus_user
+      POSTGRES_PASSWORD: change_this_password # IMPORTANT: Change this to a strong, unique password!
+      POSTGRES_DB: nexus_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nexus_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexus_backend
+    ports:
+      - "8000:8000" # Assuming backend runs on port 8000
+      - "8001:8001" # Expose Prometheus metrics port
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: nexus_user
+      POSTGRES_PASSWORD: change_this_password # IMPORTANT: Change this to a strong, unique password!
+      POSTGRES_DB: nexus_db
+      # Assuming the backend uses a DATABASE_URL format for SQLAlchemy/SQLModel
+      DATABASE_URL: postgresql://nexus_user:change_this_password@postgres:5432/nexus_db # IMPORTANT: Update password here too!
+    volumes:
+      - ./backend:/app/backend # Mount backend code for development/live reloading
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - nexus_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  nexus_network:
+    driver: bridge

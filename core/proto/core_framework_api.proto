@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package coreframeworkapi;
+
+import "google/protobuf/any.proto"; // Import Any for flexible data types
+import "google/protobuf/timestamp.proto"; // Import Timestamp for timestamps
+
+// Import data models from other proto files if they are used directly in RPC messages
+import "state_manager.proto"; // For FileInfo, etc. if needed
+import "application_registry.proto"; // For ToolDefinition, ResourceDefinition, etc. if needed
+
+// Service providing a standardized interface for sandboxes to interact with core framework services.
+service CoreFrameworkAPI {
+  rpc LogFrameworkMessage (LogFrameworkMessageRequest) returns (LogFrameworkMessageResponse);
+  rpc RecordMetric (RecordMetricRequest) returns (RecordMetricResponse);
+  rpc GetConfigValue (GetConfigValueRequest) returns (GetConfigValueResponse);
+
+  // TODO: Add RPC methods for State Management access (get/set/delete runtime state, get definition files)
+  // rpc GetRuntimeState (GetRuntimeStateRequest) returns (GetRuntimeStateResponse);
+  // rpc SetRuntimeState (SetRuntimeStateRequest) returns (SetRuntimeStateResponse);
+  // rpc DeleteRuntimeState (DeleteRuntimeStateRequest) returns (DeleteRuntimeStateResponse);
+  // rpc GetDefinitionFile (GetDefinitionFileRequest) returns (GetDefinitionFileResponse); // Can reuse StateManager messages?
+
+  // TODO: Add RPC methods for Tool Management access (e.g., list available tools, get tool definition)
+  // rpc ListAvailableTools (ListAvailableToolsRequest) returns (ListAvailableToolsResponse); // Can reuse ToolManager messages?
+  // rpc GetToolDefinition (GetToolDefinitionRequest) returns (GetToolDefinitionResponse); // Can reuse ToolManager messages?
+
+  // TODO: Add RPC methods for Event Bus access (e.g., publish event)
+  // rpc PublishEvent (PublishEventRequest) returns (PublishEventResponse);
+}
+
+// --- Messages ---
+
+// Data Models (Simplified for Proto definition based on expected structure)
+// These should ideally match the core.shared.data_models.data_models.py definitions
+
+message LogMessage {
+  string level = 1; // e.g., "info", "error"
+  string message = 2;
+  string component_name = 3;
+  optional string traceId = 4;
+  optional string appId = 5;
+  optional string requestId = 6;
+  optional string taskId = 7;
+  map<string, string> context = 8; // Simplified context as string map
+  optional google.protobuf.Timestamp timestamp = 9; // Use Timestamp message
+  map<string, google.protobuf.Any> metadata = 10; // Use Any for flexible metadata
+}
+
+message Metric {
+  string name = 1;
+  string type = 2; // e.g., "counter", "gauge", "histogram"
+  optional double value = 3; // Value for gauge/histogram
+  map<string, string> labels = 4; // Metric labels
+  optional string appId = 5; // App ID context
+  optional string traceId = 6; // Trace ID context
+  optional string requestId = 7; // Request ID context
+  // TODO: Add timestamp if needed
+}
+
+
+// RPC Request and Response Messages
+
+message LogFrameworkMessageRequest {
+  LogMessage log_message = 1; // Pass the LogMessage data model
+}
+
+message LogFrameworkMessageResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+}
+
+message RecordMetricRequest {
+  Metric metric = 1; // Pass the Metric data model
+}
+
+message RecordMetricResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+}
+
+message GetConfigValueRequest {
+  string appId = 1;
+  string key = 2;
+  optional string componentId = 3;
+}
+
+message GetConfigValueResponse {
+  bool success = 1;
+  string key = 2;
+  google.protobuf.Any value = 3; // Use Any to represent the config value
+  string error_message = 4; // Reason for failure
+}
+
+// TODO: Define request/response messages for State Management, Tool Management, Event Bus RPCs

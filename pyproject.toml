@@ -7,9 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10" # Aligning with potential UHLP standard
+gitpython = "^3.1.44"
+redis = "^6.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0.0" # Basic testing framework
+grpcio-tools = "^1.71.0"
 
 [build-system]
 requires = ["poetry-core"]

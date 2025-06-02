@@ -1,0 +1,232 @@
+syntax = "proto3";
+
+package applicationregistry;
+
+// Service for managing application definitions, configuration, and status.
+// Interacts with the StateManager for persistent storage.
+service ApplicationRegistry {
+  rpc RegisterApplication (RegisterApplicationRequest) returns (RegisterApplicationResponse);
+  rpc UpdateApplication (UpdateApplicationRequest) returns (UpdateApplicationResponse);
+  rpc DeregisterApplication (DeregisterApplicationRequest) returns (DeregisterApplicationResponse);
+  rpc GetApplicationStatus (GetApplicationStatusRequest) returns (GetApplicationStatusResponse);
+  rpc ListActiveApplications (ListActiveApplicationsRequest) returns (ListActiveApplicationsResponse);
+  rpc GetApplicationDetails (GetApplicationDetailsRequest) returns (GetApplicationDetailsResponse);
+  rpc GetSandboxRequirements (GetSandboxRequirementsRequest) returns (GetSandboxRequirementsResponse);
+  rpc GetComponentDefinition (GetComponentDefinitionRequest) returns (GetComponentDefinitionResponse);
+  rpc GetAppConfigurationValue (GetAppConfigurationValueRequest) returns (GetAppConfigurationValueResponse);
+  rpc ValidateApiKey (ValidateApiKeyRequest) returns (ValidateApiKeyResponse);
+  rpc GetApplicationPermissions (GetApplicationPermissionsRequest) returns (GetApplicationPermissionsResponse);
+  rpc GetUserPermissionsForApp (GetUserPermissionsForAppRequest) returns (GetUserPermissionsForAppResponse);
+}
+
+// --- Messages ---
+
+// Data Models (Simplified for Proto definition based on expected structure)
+// These should ideally match the core.shared.data_models.data_models.py definitions
+
+message AppDefinition {
+  string appId = 1;
+  string name = 2;
+  string description = 3;
+  SandboxPoolConfig sandboxPoolConfig = 4; // Assuming SandboxPoolConfig is a nested message
+  map<string, ComponentDefinition> componentRegistry = 5; // Assuming ComponentRegistry is a map
+  map<string, string> config = 6; // Assuming config is a simple key-value map
+  // TODO: Add other fields from AppDefinition data model (e.g., permissions, dependencies, workflows, prompts)
+}
+
+message SandboxPoolConfig {
+  string image = 1; // Docker image name
+  int32 min_instances = 2;
+  int32 max_instances = 3;
+  // TODO: Add resource limits, volumes, networking config
+}
+
+message ComponentDefinition {
+  string componentId = 1;
+  string description = 2;
+  string execution_type = 3; // e.g., "llm", "jit", "workflow"
+  // TODO: Add component-specific configuration (e.g., prompt_ref, workflow_ref, jit_artifact_ref)
+  // oneof execution_config { ... } // Using oneof for different config types
+}
+
+message ToolDefinition {
+  string name = 1;
+  string description = 2;
+  string input_schema_json = 3; // Store schema as JSON string
+  string output_schema_json = 4; // Store schema as JSON string
+  map<string, string> source = 5; // e.g., {"type": "mcp_server", "name": "server_name"} or {"type": "app", "appId": "app_id"}
+  // TODO: Add other fields from ToolDefinition data model
+}
+
+message ResourceDefinition {
+  string uri = 1;
+  string description = 2;
+  string schema_json = 3; // Store schema as JSON string
+  map<string, string> source = 4; // e.g., {"type": "mcp_server", "name": "server_name"}
+  // TODO: Add other fields from ResourceDefinition data model
+}
+
+message ServerStatus {
+  string name = 1;
+  string status = 2; // e.g., "connected", "disconnected", "error"
+  // TODO: Add other status details
+}
+
+message SandboxStatus {
+  string sandboxId = 1;
+  string appId = 2;
+  string status = 3; // e.g., "running", "stopped", "error"
+  string image = 4;
+  string created = 5; // Timestamp string
+  string started_at = 6; // Timestamp string
+  string finished_at = 7; // Timestamp string
+  int32 exit_code = 8;
+  map<string, string> details = 9; // Optional details
+  // TODO: Add resource usage, network info, etc.
+}
+
+message InterAppPermission {
+  string target_app_id = 1;
+  repeated string permissions = 2; // List of permission strings (e.g., "read_state", "execute_tool:tool_name")
+}
+
+message UserPermissionsForApp {
+  string userId = 1;
+  string appId = 2;
+  repeated string permissions = 3; // List of permission strings
+}
+
+
+// RPC Request and Response Messages
+
+message RegisterApplicationRequest {
+  AppDefinition definition = 1;
+}
+
+message RegisterApplicationResponse {
+  bool success = 1;
+  string appId = 2;
+  string status = 3; // Initial status (e.g., "INITIALIZING")
+  string error_message = 4; // Reason for failure
+}
+
+message UpdateApplicationRequest {
+  string appId = 1;
+  repeated string update_mask = 2; // Fields to update (optional)
+  AppDefinition updated_definition_fields = 3; // Fields with new values
+}
+
+message UpdateApplicationResponse {
+  bool success = 1;
+  string appId = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message DeregisterApplicationRequest {
+  string appId = 1;
+  bool delete_state = 2;
+}
+
+message DeregisterApplicationResponse {
+  bool success = 1;
+  string appId = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message GetApplicationStatusRequest {
+  string appId = 1;
+}
+
+message GetApplicationStatusResponse {
+  string appId = 1;
+  string status = 2; // e.g., "ACTIVE", "INACTIVE", "ERROR"
+  // TODO: Add more detailed status info
+}
+
+message ListActiveApplicationsRequest {
+  // No fields needed for this request
+}
+
+message ListActiveApplicationsResponse {
+  repeated GetApplicationStatusResponse applications = 1; // List of application statuses
+}
+
+message GetApplicationDetailsRequest {
+  string appId = 1;
+}
+
+message GetApplicationDetailsResponse {
+  bool success = 1;
+  AppDefinition definition = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message GetSandboxRequirementsRequest {
+  string appId = 1;
+}
+
+message GetSandboxRequirementsResponse {
+  bool success = 1;
+  SandboxPoolConfig sandbox_requirements = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message GetComponentDefinitionRequest {
+  string appId = 1;
+  optional string componentId = 2; // Use optional for nullable fields
+  map<string, string> route_input = 3; // Simplified input for routing logic
+}
+
+message GetComponentDefinitionResponse {
+  bool success = 1;
+  ComponentDefinition component_definition = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message GetAppConfigurationValueRequest {
+  string appId = 1;
+  string key = 2;
+  optional string componentId = 3; // Use optional for nullable fields
+}
+
+message GetAppConfigurationValueResponse {
+  bool success = 1;
+  string key = 2;
+  string value_json = 3; // Store value as JSON string to handle Any type
+  string error_message = 4; // Reason for failure
+}
+
+message ValidateApiKeyRequest {
+  string api_key = 1;
+}
+
+message ValidateApiKeyResponse {
+  bool success = 1;
+  optional string appId = 2; // App associated with the key
+  optional string userId = 3; // User associated with the key
+  repeated string permissions = 4; // List of permissions
+  string error_message = 5; // Reason for failure
+}
+
+message GetApplicationPermissionsRequest {
+  string appId = 1;
+}
+
+message GetApplicationPermissionsResponse {
+  bool success = 1;
+  repeated InterAppPermission permissions = 2;
+  string error_message = 3; // Reason for failure
+}
+
+message GetUserPermissionsForAppRequest {
+  string appId = 1;
+  string userId = 2;
+}
+
+message GetUserPermissionsForAppResponse {
+  bool success = 1;
+  string userId = 2;
+  string appId = 3;
+  repeated string permissions = 4;
+  string error_message = 5; // Reason for failure
+}

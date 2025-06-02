@@ -14,6 +14,12 @@
 - **Optimization:** JIT compilation orchestrated by OptimizationOracle (Section 02.1.6).
 - **Event Bus:** In-memory event bus for asynchronous communication.
 
+### Dockerfile Best Practices & Base Images
+- Multi-stage builds are optional; Nexus (LLM) will decide if it's the right choice for a specific project. This is not a core system enforcement.
+- The system will provide a collection of slim/base Docker images as a starting point. These can be built upon to create more comprehensive Dockerfiles tailored to application needs.
+- The system should guide users in selecting base images: A predefined list of curated slim/base images will be provided by the system. The LLM can then use these as a foundation or decide to build more complex images.
+- Dockerfile linting (e.g., with hadolint) is not a core MVP requirement but could be a future enhancement.
+
 ### Sandboxed Components
 - **Execution Environments:** Docker containers (JIT Runners, LLM Orchestrators) (Section 03.2, 06.1).
 - **Internal API:** HTTP POST /execute endpoint (Section 03.5).

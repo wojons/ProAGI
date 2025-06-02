@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package statemanager;
+
+// Service for managing application state, including versioned definitions (Git/YAML)
+// and volatile runtime state (Redis).
+service StateManager {
+  // Definition/Config State (Git/YAML)
+  rpc GetDefinitionFileContent (GetDefinitionFileContentRequest) returns (GetDefinitionFileContentResponse);
+  rpc SetDefinitionFileContent (SetDefinitionFileContentRequest) returns (SetDefinitionFileContentResponse);
+  rpc DeleteDefinitionFile (DeleteDefinitionFileRequest) returns (DeleteDefinitionFileResponse);
+  rpc ListDefinitionDirectory (ListDefinitionDirectoryRequest) returns (ListDefinitionDirectoryResponse);
+  // rpc GetFileHistory (GetFileHistoryRequest) returns (GetFileHistoryResponse); // Future: Get file history/commits
+
+  // Runtime State (Redis)
+  rpc GetRuntimeValue (GetRuntimeValueRequest) returns (GetRuntimeValueResponse);
+  rpc SetRuntimeValue (SetRuntimeValueRequest) returns (SetRuntimeValueResponse);
+  rpc DeleteRuntimeValue (DeleteRuntimeValueRequest) returns (DeleteRuntimeValueResponse);
+}
+
+// --- Definition/Config State Messages ---
+
+message GetDefinitionFileContentRequest {
+  string app_id = 1;
+  string path = 2; // Path relative to the app's definition root
+  // Optional: Specify version/commit hash
+  // string commit_hash = 3;
+}
+
+message GetDefinitionFileContentResponse {
+  string content = 1;
+  // Optional: Metadata like commit hash, author, timestamp
+  // string commit_hash = 2;
+}
+
+message SetDefinitionFileContentRequest {
+  string app_id = 1;
+  string path = 2; // Path relative to the app's definition root
+  string content = 3;
+  string commit_message = 4; // Message for the Git commit
+  // Optional: Specify base commit hash for optimistic concurrency
+  // string base_commit_hash = 5;
+}
+
+message SetDefinitionFileContentResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+  // Optional: New commit hash
+  // string new_commit_hash = 3;
+}
+
+message DeleteDefinitionFileRequest {
+  string app_id = 1;
+  string path = 2; // Path relative to the app's definition root
+  string commit_message = 3; // Message for the Git commit
+  // Optional: Specify base commit hash for optimistic concurrency
+  // string base_commit_hash = 4;
+}
+
+message DeleteDefinitionFileResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+  // Optional: New commit hash
+  // string new_commit_hash = 3;
+}
+
+message ListDefinitionDirectoryRequest {
+  string app_id = 1;
+  string path = 2; // Path relative to the app's definition root
+  bool recursive = 3; // List recursively
+}
+
+message FileInfo {
+  string name = 1;
+  string path = 2; // Full path relative to app's definition root
+  enum FileType {
+    FILE = 0;
+    DIRECTORY = 1;
+  }
+  FileType type = 3;
+  // Optional: Size, last modified time, etc.
+  // int64 size = 4;
+  // int64 last_modified_timestamp = 5;
+}
+
+message ListDefinitionDirectoryResponse {
+  repeated FileInfo files = 1;
+  bool success = 2; // Indicate if listing was successful
+  string error_message = 3; // Reason for failure
+}
+
+// --- Runtime State Messages ---
+
+message GetRuntimeValueRequest {
+  string app_id = 1;
+  string key = 2; // Key for the runtime value
+}
+
+message GetRuntimeValueResponse {
+  bool found = 1; // True if the key was found
+  string value = 2; // The value as a string (needs deserialization by client)
+  string error_message = 3; // Reason for failure
+}
+
+message SetRuntimeValueRequest {
+  string app_id = 1;
+  string key = 2; // Key for the runtime value
+  string value = 3; // The value as a string (needs serialization by client)
+  // Optional: Expiration time
+  // int64 expiration_seconds = 4;
+}
+
+message SetRuntimeValueResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+}
+
+message DeleteRuntimeValueRequest {
+  string app_id = 1;
+  string key = 2; // Key for the runtime value
+}
+
+message DeleteRuntimeValueResponse {
+  bool success = 1;
+  string error_message = 2; // Reason for failure
+}
+
+// --- Common Messages (Placeholder based on DataModels title) ---
+// These would be defined based on the actual DataModels spec section
+// message AppDefinition { ... }
+// message Dependency { ... }
+// message CommitInfo { ... }
+// message SandboxStatus { ... }
+// message ToolDefinition { ... }
+// message ResourceDefinition { ... }
+// message ServerStatus { ... }

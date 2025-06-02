@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "nexus-cocreate-ai-sandbox"
+version = "0.1.0"
+description = "Sandbox environment for Nexus CoCreate AI"
+authors = ["Cline AI"]
+readme = "README.md"
+package-mode = false # This is a service, not a library
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.111.0" # For the /execute endpoint
+uvicorn = {extras = ["standard"], version = "^0.30.1"} # To run the FastAPI app
+# TODO: Add other dependencies needed in the sandbox (e.g., for workflow interpretation, JIT execution, tool interaction) (Issue #XX)
+# httpx for calling Core Framework API
+# PyYAML for workflow parsing
+# Potentially other libraries based on component types
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,12 @@
+/* Basic styles for the POC frontend */
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #333;
+}
+
+/* TODO: Add more styles as UI elements are added (Issue #XX) */
